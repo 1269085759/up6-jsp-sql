@@ -63,7 +63,7 @@ function DownloaderMgr()
     	, "ClsidPart"	: "57FA11EE-5E98-415C-933D-BCA188B86B5E"
 		, "CabPath"		: "http://www.ncmem.com/download/down3/down3.cab"
 		//x64
-		, "ClsidPart64"	: "19799DD1-7357-49de-AE5D-E7A010A3172C"
+		, "ClsidPart64"	: "21B0B682-5C37-470D-8DFF-950EF93FFC08"
 		, "CabPath64"	: "http://www.ncmem.com/download/down3/down64.cab"
 		//Firefox
 		, "XpiType"		: "application/npHttpDown3"
@@ -381,8 +381,8 @@ function DownloaderMgr()
 
     //浏览器对象
 	this.browser = {
-	      entID: "Downloader2Event"
-	    , cbkID: "Downloader2EventCallBack"
+	      entID: "Downloader3Event"
+	    , cbkID: "Downloader3EventCallBack"
 		, check: function ()//检查插件是否已安装
 		{
 		    return null != this.GetVersion();
