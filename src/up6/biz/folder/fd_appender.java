@@ -114,7 +114,7 @@ public class fd_appender
 
     void make_ids() throws SQLException
     {
-    	CallableStatement cmd = this.con.prepareCall("{call fd_files_add_batch(?,?,?,?)}");
+    	CallableStatement cmd = this.con.prepareCall("{call fd_files_add_batch(?,?)}");
         cmd.setInt(1, this.m_root.files.size()+1);
         cmd.setInt(2, this.m_root.folders.size()+1);      
         ResultSet rs = cmd.executeQuery();
@@ -258,7 +258,7 @@ public class fd_appender
     protected void get_md5_files() throws SQLException
     {
     	if(this.m_root.files.size() < 1) return;//没有文件
-        String sql = "{call fd_files_check(?)}";
+        String sql = "{call fd_files_check(?,?,?)}";
 
         CallableStatement cmd = this.con.prepareCall(sql);
         
