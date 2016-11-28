@@ -7,9 +7,9 @@ import java.sql.*;
 public class DbHelper {
 	//当前项目路径。D:\\WebApps\\HttpUploader3\\
 	String m_curPath;
-	String m_dbUser = "sa";				//SQL Server帐号
-	String m_dbPass = "123456";			//SQL Server密码
-	String m_dbTable = "HttpUploader6";	//SQL Server数据库名称
+	public String m_dbUser = "sa";				//SQL Server帐号
+	public String m_dbPass = "123456";			//SQL Server密码
+	public String m_dbTable = "HttpUploader6";	//SQL Server数据库名称
 
 	public DbHelper()
 	{
