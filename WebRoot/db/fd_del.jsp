@@ -1,4 +1,4 @@
-<%@ page language="java" import="up6.DBFolder" pageEncoding="UTF-8"%><%@
+<%@ page language="java" import="up6.*" pageEncoding="UTF-8"%><%@
 	page contentType="text/html;charset=UTF-8"%><%@ 
 	page import="org.apache.commons.lang.StringUtils" %><%
 /*
@@ -9,19 +9,17 @@
 */
 String path = request.getContextPath();
 
-String fid	= request.getParameter("fid");
-String fdid	= request.getParameter("fd_id");
-String uid	= request.getParameter("uid");
-String cbk 	= request.getParameter("callback");//jsonp
+String fid 		= request.getParameter("id");
+String uid 		= request.getParameter("uid");
+String callback = request.getParameter("callback");//jsonp
 int ret = 0;
 
 //参数为空
 if (	!StringUtils.isBlank(fid)
-	&&	!StringUtils.isBlank(fdid)
-	&&	uid.length()>0 )
+	||	uid.length()>0 )
 {
-	DBFolder.Remove(Integer.parseInt(fid),Integer.parseInt(fdid), Integer.parseInt(uid));
+	DBFolder.Remove(fid,Integer.parseInt(uid));
 	ret = 1;
 }
-out.write(cbk + "({\"value\":" + ret + "})");
+out.write(callback + "({\"value\":"+ret+"})");
 %>

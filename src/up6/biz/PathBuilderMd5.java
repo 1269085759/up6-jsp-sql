@@ -7,16 +7,16 @@ import java.util.Date;
 
 import up6.PathTool;
 import up6.model.FolderInf;
-import up6.model.xdb_files;
+import up6.model.FileInf;
 
 
-public class PathMd5Builder extends PathBuilder {
+public class PathBuilderMd5 extends PathBuilder {
 	public String genFolder(int uid,FolderInf fd){return "";}
 	/* 所有文件均以md5模式存储
 	 * 格式：
 	 * 	upload/年/月/日/md5.ext 
 	 */
-	public String genFile(int uid,xdb_files f) throws IOException{
+	public String genFile(int uid,FileInf f) throws IOException{
 
 		SimpleDateFormat fmtDD = new SimpleDateFormat("dd");
 		SimpleDateFormat fmtMM = new SimpleDateFormat("MM");
@@ -52,8 +52,7 @@ public class PathMd5Builder extends PathBuilder {
 		return fl.getCanonicalPath();//
 	}
 	
-
-    public String genFile(int uid, String md5,String nameLoc) throws IOException
+	public String genFile(int uid, String md5,String nameLoc) throws IOException
     {
 		SimpleDateFormat fmtDD = new SimpleDateFormat("dd");
 		SimpleDateFormat fmtMM = new SimpleDateFormat("MM");

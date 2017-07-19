@@ -2,9 +2,9 @@
 	page contentType="text/html;charset=UTF-8"%><%@ 
 	page import="com.google.gson.*" %><%@
 	page import="up6.*" %><%@
-	page import="up6.biz.*" %><%@
-	page import="up6.biz.folder.*" %><%@
 	page import="up6.model.*" %><%@
+	page import="up6.biz.*" %><%@
+	page import="up6.biz.folder.*" %><%@	
 	page import="org.apache.commons.lang.StringUtils" %><%@
 	page import="java.net.URLDecoder" %><%@
 	page import="java.net.URLEncoder" %><%/*
@@ -48,10 +48,7 @@ String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 
 String folderStr = request.getParameter("folder");
-folderStr = folderStr.replace("+","%20");
-//客户端使用的是encodeURIComponent编码，
-folderStr = URLDecoder.decode(folderStr,"UTF-8");//utf-8解码
-
+folderStr = PathTool.url_decode(folderStr);
 
 //参数为空
 if ( StringUtils.isBlank(folderStr) )

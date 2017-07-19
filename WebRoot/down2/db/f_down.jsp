@@ -1,7 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%><%@ 
 	page contentType="text/html;charset=UTF-8"%><%@ 
-	page import="up6.*" %><%@
-	page import="up6.model.*" %><%@ 
+	page import="up6.*" %><%@ 
+	page import="up6.model.*" %><%@
 	page import="java.net.URLDecoder" %><%@ 
 	page import="java.net.URLEncoder" %><%@ 
 	page import="org.apache.commons.lang.*" %><%@ 
@@ -26,10 +26,10 @@ if (StringUtils.isBlank(fid))
 	return;
 }
 
-xdb_files inf = new xdb_files();
+FileInf inf = new FileInf();
 DBFile db = new DBFile();
 //文件不存在
-if(!db.GetFileInfByFid(Integer.parseInt(fid),inf))
+if(!db.GetFileInfByFid( fid,inf))
 {
 	return;
 }

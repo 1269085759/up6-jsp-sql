@@ -2,12 +2,12 @@
 	page contentType="text/html;charset=UTF-8"%><%@ 
 	page import="com.google.gson.*" %><%@
 	page import="up6.*" %><%@
+	page import="up6.model.*" %><%@
 	page import="up6.biz.*" %><%@
-	page import="up6.biz.folder.*" %><%@
+	page import="up6.biz.folder.*" %><%@	
 	page import="org.apache.commons.lang.StringUtils" %><%@
 	page import="java.net.URLDecoder" %><%@
-	page import="java.net.URLEncoder" %><%
-/*
+	page import="java.net.URLEncoder" %><%/*
 	以md5模式上传文件夹，不在服务端创建层级结构，在数据库中保存层级信息。
 	客户端上传的文件夹JSON格式：
     [
@@ -38,6 +38,7 @@
 	更新记录：
 		2014-07-23 创建
 		2014-08-05 修复BUG，上传文件夹如果没有子文件夹时报错的问题。
+		2015-07-30 将子文件命名方式改为 md5 方式，不再使用原文件名称存储，防止冲突。
 		2016-04-09 完善存储逻辑。
 
 	JSON格式化工具：http://tool.oschina.net/codeformat/json
@@ -48,7 +49,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 String folderStr = request.getParameter("folder");
 folderStr = folderStr.replace("+","%20");
-//客户端使用的是encodeURIComponent编码，
 folderStr = URLDecoder.decode(folderStr,"UTF-8");//utf-8解码
 
 
@@ -67,5 +67,4 @@ adder.save();//保存到数据库
 String json = g.toJson(adder.m_root);
 json = URLEncoder.encode(json,"utf-8");
 json = json.replace("+","%20");
-out.write(json);
-%>
+out.write(json);%>

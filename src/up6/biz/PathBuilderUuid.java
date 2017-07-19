@@ -5,10 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-import up6.model.xdb_files;
+import up6.model.FileInf;
 
 
-public class PathUuidBuilder extends PathBuilder{
+public class PathBuilderUuid extends PathBuilder{
 	/* 生成文件夹存储路径，完全与客户端文件夹结构保持一致
 	 * 格式： 	
 	 *  upload/2016/05/17/uuid/folder_name
@@ -19,9 +19,6 @@ public class PathUuidBuilder extends PathBuilder{
 	 */
 	public String genFolder(int uid,String nameLoc) throws IOException
 	{
-		String uuid = UUID.randomUUID().toString();
-		uuid = uuid.replace("-", "");
-		
 		SimpleDateFormat fmtDD = new SimpleDateFormat("dd");
 		SimpleDateFormat fmtMM = new SimpleDateFormat("MM");
 		SimpleDateFormat fmtYY = new SimpleDateFormat("yyyy");
@@ -31,6 +28,9 @@ public class PathUuidBuilder extends PathBuilder{
 		String strMM = fmtMM.format(date);
 		String strYY = fmtYY.format(date);
 		
+		String uuid = UUID.randomUUID().toString();
+		uuid = uuid.replace("-","");
+		
 		String path = this.getRoot() + "/";
 		path = path.concat(strYY);
 		path = path.concat("/");
@@ -38,6 +38,7 @@ public class PathUuidBuilder extends PathBuilder{
 		path = path.concat("/");
 		path = path.concat(strDD);
 		path = path.concat("/");
+		
 		path = path.concat(uuid);
 		path = path.concat("/");
 		path = path.concat(nameLoc);
@@ -49,7 +50,7 @@ public class PathUuidBuilder extends PathBuilder{
 	 * 	upload/uid/年/月/日/uuid/file_name
 	 * @see Xproer.PathBuilder#genFile(int, Xproer.xdb_files)
 	 */
-	public String genFile(int uid,xdb_files f) throws IOException{
+	public String genFile(int uid,FileInf f) throws IOException{
 		String uuid = UUID.randomUUID().toString();
 		uuid = uuid.replace("-", "");
 		

@@ -8,7 +8,7 @@
 	DbHelper db = new DbHelper();
 	String dbStr = " 地址："+ "jdbc:sqlserver://127.0.0.1:1433;DatabaseName=" + db.m_dbTable + " 帐号："+ db.m_dbUser + " 密码："+db.m_dbPass;		
 	
-	PathMd5Builder pb = new PathMd5Builder();
+	PathBuilderMd5 pb = new PathBuilderMd5();
 	String pathSvr = pb.genFile(0,"md5","QQ2016	.exe");
 	pathSvr = pathSvr.replace("\\","/");
 	

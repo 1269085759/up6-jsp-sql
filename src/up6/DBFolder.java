@@ -112,7 +112,7 @@ public class DBFolder {
 		db.ExecuteNonQuery(cmd);
 	}
 
-	static public void Remove(int fid,int fdid,int uid)
+	static public void Remove(String id,int uid)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("update up6_files set f_deleted=1 where f_id=? and f_uid=?;");
@@ -122,11 +122,11 @@ public class DBFolder {
 		PreparedStatement cmd = db.GetCommand(sb.toString());
 		try 
 		{
-			cmd.setInt(1, fid);
+			cmd.setString(1, id);
 			cmd.setInt(2, uid);
-			cmd.setInt(3, fdid);
+			cmd.setString(3, id);
 			cmd.setInt(4, uid);
-			cmd.setInt(5, fdid);
+			cmd.setString(5, id);
 			cmd.setInt(6, uid);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

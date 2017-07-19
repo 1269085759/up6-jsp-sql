@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import up6.model.FileInf;
 import up6.model.FolderInf;
-import up6.model.xdb_files;
 
 import net.sf.json.JSONArray;
 
@@ -57,20 +56,20 @@ public class DBFile {
             while (r.next())
             {
                 FileInf fi 		= new FileInf();
-                fi.idSvr 		= r.getInt(1);
+                fi.id 			= r.getString(1);
                 fi.nameLoc 		= r.getString(2);
                 fi.pathLoc 		= r.getString(3);
                 fi.lenLoc 		= r.getLong(4);
                 fi.sizeLoc 		= r.getString(5);
                 fi.md5 			= r.getString(6);
-                fi.pidRoot 		= r.getInt(7);
-                fi.pidSvr 		= r.getInt(8);
+                fi.pidRoot 		= r.getString(7);
+                fi.pid 			= r.getString(8);
                 fi.lenSvr 		= r.getLong(9);
                 fi.pathSvr 		= r.getString(10);//fix:服务器会重复创建文件项的问题
                 fi.pathRel 		= r.getString(11) + "\\";//相对路径：root\\child\\folder\\
                 files.add(fi);
                 //添加到列表
-                ids.add( Integer.toString(fi.idSvr) );
+                //ids.add( Integer.toString(fi.idSvr) );
             }
             r.close();            
             cmd.close();
@@ -84,13 +83,12 @@ public class DBFile {
 	 * @param f_uid
 	 * @return
 	 */
-	public static String GetAllComplete(int f_uid)
+	public static String GetAllComplete(int uid)
 	{
         StringBuilder sb = new StringBuilder();
         sb.append("select ");
-        sb.append("f_id");
+        sb.append(" f_id");
         sb.append(",f_fdTask");
-        sb.append(",f_fdID");
         sb.append(",f_nameLoc");
         sb.append(",f_pathLoc");
         sb.append(",f_lenLoc");
@@ -102,7 +100,7 @@ public class DBFile {
         //sb.append(" on f_fdID = fd_id");
         sb.append(" where f_deleted=0 and f_fdChild=0 and f_complete=1");
 
-        ArrayList<xdb_files> files = new ArrayList<xdb_files>();
+        ArrayList<FileInf> files = new ArrayList<FileInf>();
         DbHelper db = new DbHelper();
         PreparedStatement cmd = db.GetCommand(sb.toString());
         try
@@ -110,15 +108,14 @@ public class DBFile {
         	ResultSet r = db.ExecuteDataSet(cmd);
             while (r.next())
             {
-                xdb_files f = new xdb_files();
-                f.idSvr 	= r.getInt(1);
-                f.f_fdTask 	= r.getBoolean(2);
-                f.f_fdID 	= r.getInt(3);
-                f.nameLoc 	= r.getString(4);
-                f.pathLoc 	= r.getString(5);
-                f.lenLoc 	= r.getLong(6);
-                f.sizeLoc 	= r.getString(7);
-                f.perSvr 	= r.getString(8);//已下载百分比
+                FileInf f = new FileInf();
+                f.id 		= r.getString(1);
+                f.fdTask 	= r.getBoolean(2);
+                f.nameLoc 	= r.getString(3);
+                f.pathLoc 	= r.getString(4);
+                f.lenLoc 	= r.getLong(5);
+                f.sizeLoc 	= r.getString(6);
+                f.perSvr 	= r.getString(7);//已下载百分比
 
                 files.add(f);
 
@@ -131,55 +128,49 @@ public class DBFile {
 	    return g.toJson( files );//bug:arrFiles为空时，此行代码有异常
 	}
 	
-	static public String GetAllUnComplete(int f_uid)
+	static public String GetAllUnComplete(int uid)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("select ");
-		sb.append("f_id");
+		sb.append(" f_id");
 		sb.append(",f_fdTask");
-		sb.append(",f_fdID");
 		sb.append(",f_nameLoc");
+		sb.append(",f_nameSvr");
 		sb.append(",f_pathLoc");
+		sb.append(",f_pathSvr");
+		sb.append(",f_pathRel");
 		sb.append(",f_md5");
 		sb.append(",f_lenLoc");
 		sb.append(",f_sizeLoc");
 		sb.append(",f_pos");
 		sb.append(",f_lenSvr");
 		sb.append(",f_perSvr");
-		sb.append(",f_complete");
-		sb.append(",f_pathSvr");//fix(2015-03-16):修复无法续传文件的问题。
-		//文件夹信息
-		sb.append(",fd_files");
-		sb.append(",fd_filesComplete");
-		sb.append(" from up6_files left join up6_folders on up6_files.f_fdID = up6_folders.fd_id");//change(2015-03-18):联合查询文件夹数据
-		sb.append(" where f_uid=? and f_deleted=0 and f_fdChild=0 and f_complete=0;");//fix(2015-03-18):只加载未完成列表
+		sb.append(" from up6_files");
+		sb.append(" where f_uid=? and f_deleted=0 and f_fdChild=0 and f_complete=0;");
 
-		ArrayList<xdb_files> files = new ArrayList<xdb_files>();
+		ArrayList<FileInf> files = new ArrayList<FileInf>();
 		DbHelper db = new DbHelper();
 		PreparedStatement cmd = db.GetCommand(sb.toString());
 		try {
-			cmd.setInt(1, f_uid);
+			cmd.setInt(1, uid);
 			ResultSet r = db.ExecuteDataSet(cmd);
 			while(r.next())
 			{
-				xdb_files f 	= new xdb_files();
-				f.uid			= f_uid;
-				f.idSvr 		= r.getInt(1);
-				f.f_fdTask 		= r.getBoolean(2);
-				f.f_fdID 		= r.getInt(3);
-				f.nameLoc 		= r.getString(4);
+				FileInf f 		= new FileInf();
+				f.uid			= uid;
+				f.id 			= r.getString(1);
+				f.fdTask 		= r.getBoolean(2);
+				f.nameLoc 		= r.getString(3);
+				f.nameSvr 		= r.getString(4);
 				f.pathLoc 		= r.getString(5);
-				f.md5 			= r.getString(6);
-				f.lenLoc 		= r.getLong(7);
-				f.sizeLoc 		= r.getString(8);
-				f.FilePos 		= r.getLong(9);
-				f.lenSvr 		= r.getLong(10);
-				f.perSvr 		= r.getString(11);
-				f.complete 		= r.getBoolean(12);
-				f.pathSvr		= r.getString(13);//fix(2015-03-19):修复无法续传文件的问题。
-				f.filesCount 	= r.getInt(14);//add(2015-03-18):
-				f.filesComplete = r.getInt(15);//add(2015-03-18):
-
+				f.pathSvr 		= r.getString(6);
+				f.pathRel 		= r.getString(7);
+				f.md5 			= r.getString(8);
+				f.lenLoc 		= r.getLong(9);
+				f.sizeLoc 		= r.getString(10);
+				f.offset 		= r.getLong(11);
+				f.lenSvr 		= r.getLong(12);
+				f.perSvr 		= r.getString(13);
 				files.add(f);
 				
 			}
@@ -192,35 +183,8 @@ public class DBFile {
 		}
 		
 		if(files.size() < 1) return null;
-
-
-		ArrayList<xdb_files> arrFiles = new ArrayList<xdb_files>();
-		for(xdb_files f : files)
-		{
-			//是文件夹任务=>取文件夹JSON
-			if (f.f_fdTask)
-			{
-				FolderInf fd = new FolderInf();
-				f.fd_json = DBFolder.GetFilesUnComplete(f.f_fdID,fd);
-                float pdPer = 0;
-                long lenPosted = DBFolder.GetLenPosted(f.f_fdID);
-                fd.lenSvr = lenPosted;
-                f.lenSvr = lenPosted;//给客户端使用。
-                fd.filesCount = f.filesCount;//add(2015-03-18):
-                fd.filesComplete = f.filesComplete;//add(2015-03-18)
-                long len = fd.lenLoc;
-                if (lenPosted > 0 && len > 0)
-                {
-                    pdPer = (float)Math.round(((lenPosted*1.0f) / len*1.0f) * 100.0f);
-                }
-                f.idSvr = f.f_fdID;//将文件ID改为文件夹的ID，客户端续传文件夹时将会使用这个ID。
-				f.perSvr = Float.toString( pdPer ) + "%";
-                f.sizeLoc = fd.size;
-			}
-			arrFiles.add( f );
-		}
 		Gson g = new Gson();
-	    return g.toJson( arrFiles );//bug:arrFiles为空时，此行代码有异常	
+	    return g.toJson( files );	
 	}
 	
 
@@ -231,7 +195,7 @@ public class DBFile {
 	/// <param name="md5"></param>
 	/// <param name="inf"></param>
 	/// <returns></returns>
-	public boolean exist_file(String md5, xdb_files fileSvr)
+	public boolean exist_file(String md5, FileInf fileSvr)
 	{
 		boolean ret = false;
 		StringBuilder sb = new StringBuilder();
@@ -261,7 +225,7 @@ public class DBFile {
 			ResultSet r = db.ExecuteDataSet(cmd);
 			if (r.next())
 			{
-				fileSvr.idSvr 			= r.getInt(1);
+				fileSvr.id 				= r.getString(1);
 				fileSvr.uid 			= r.getInt(2);
 				fileSvr.nameLoc 		= r.getString(3);
 				fileSvr.nameSvr 		= r.getString(4);
@@ -271,7 +235,7 @@ public class DBFile {
 				fileSvr.md5 			= r.getString(8);
 				fileSvr.lenLoc 			= r.getLong(9);
 				fileSvr.sizeLoc 		= r.getString(10);
-				fileSvr.FilePos 		= r.getLong(11);
+				fileSvr.offset 			= r.getLong(11);
 				fileSvr.lenSvr 			= r.getLong(12);
 				fileSvr.perSvr 			= r.getString(13);
 				fileSvr.complete 		= r.getBoolean(14);
@@ -279,8 +243,8 @@ public class DBFile {
 				fileSvr.deleted 		= r.getBoolean(16);
 				ret = true;
 			}
-			cmd.close();
-			
+			r.close();
+			cmd.close();			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -295,75 +259,76 @@ public class DBFile {
 	/// 文件名称，本地路径，远程路径，相对路径都使用原始字符串。
 	/// d:\soft\QQ2012.exe
 	/// </summary>
-	public int Add(xdb_files model)
+	public void Add(FileInf model)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("insert into up6_files(");
-		sb.append("f_sizeLoc");
-		sb.append(",f_pos");
-		sb.append(",f_lenSvr");
-		sb.append(",f_perSvr");
-		sb.append(",f_complete");
-		sb.append(",f_deleted");
+		sb.append(" f_id");
+		sb.append(",f_pid");
+		sb.append(",f_pidRoot");
+		sb.append(",f_fdTask");
 		sb.append(",f_fdChild");
 		sb.append(",f_uid");
+		sb.append(",f_pos");
+		sb.append(",f_md5");
+		sb.append(",f_lenLoc");
+		sb.append(",f_lenSvr");
+		sb.append(",f_perSvr");
+		sb.append(",f_sizeLoc");
 		sb.append(",f_nameLoc");
 		sb.append(",f_nameSvr");
 		sb.append(",f_pathLoc");
 		sb.append(",f_pathSvr");
 		sb.append(",f_pathRel");
-		sb.append(",f_md5");
-		sb.append(",f_lenLoc");
+		sb.append(",f_complete");
 		
 		sb.append(") values (");
 		
-		sb.append("?");//sb.append("@f_sizeLoc");
-		sb.append(",?");//sb.append(",@f_pos");
-		sb.append(",?");//sb.append(",@f_lenSvr");
-		sb.append(",?");//sb.append(",@f_perSvr");
-		sb.append(",?");//sb.append(",@f_complete");
-		sb.append(",?");//sb.append(",@f_deleted");
-		sb.append(",?");//sb.append(",@f_fdChild");
-		sb.append(",?");//sb.append(",@f_uid");
-		sb.append(",?");//sb.append(",@f_nameLoc");
-		sb.append(",?");//sb.append(",@f_nameSvr");
-		sb.append(",?");//sb.append(",@f_pathLoc");
-		sb.append(",?");//sb.append(",@f_pathSvr");
-		sb.append(",?");//sb.append(",@f_pathRel");
-		sb.append(",?");//sb.append(",@f_md5");
-		sb.append(",?");//sb.append(",@f_lenLoc");
+		sb.append(" ?");//id
+		sb.append(",?");//pid
+		sb.append(",?");//pidRoot
+		sb.append(",?");//fdTask
+		sb.append(",?");//fdChild
+		sb.append(",?");//uid
+		sb.append(",?");//pos
+		sb.append(",?");//md5
+		sb.append(",?");//lenLoc
+		sb.append(",?");//lenSvr
+		sb.append(",?");//perSvr
+		sb.append(",?");//sizeLoc
+		sb.append(",?");//nameLoc
+		sb.append(",?");//nameSvr
+		sb.append(",?");//pathLoc
+		sb.append(",?");//pathSvr
+		sb.append(",?");//pathRel
+		sb.append(",?");//complete
 		sb.append(") ");
 
 		DbHelper db = new DbHelper();
 		PreparedStatement cmd = db.GetCommand(sb.toString());
 		
 		try {
-			cmd.setString(1, model.sizeLoc);
-			cmd.setLong(2, model.FilePos);
-			cmd.setLong(3, model.lenSvr);
-			cmd.setString(4, model.perSvr);
-			cmd.setBoolean(5, model.complete);
-			//cmd.setDate(6, (java.sql.Date) model.PostedTime);
-			cmd.setBoolean(6, false);
-			cmd.setBoolean(7, model.f_fdChild);
-			cmd.setInt(8, model.uid);
-			cmd.setString(9, model.nameLoc);
-			cmd.setString(10, model.nameSvr);
-			cmd.setString(11, model.pathLoc);
-			cmd.setString(12, model.pathSvr);
-			cmd.setString(13, model.pathRel);
-			cmd.setString(14, model.md5);
-			cmd.setLong(15, model.lenLoc);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			cmd.setString(1, model.id);
+			cmd.setString(2, model.pid);
+			cmd.setString(3, model.pidRoot);
+			cmd.setBoolean(4, model.fdTask);
+			cmd.setBoolean(5, model.fdChild);
+			cmd.setInt(6, model.uid);
+			cmd.setLong(7, model.offset);
+			cmd.setString(8, model.md5);
+			cmd.setLong(9, model.lenLoc);
+			cmd.setLong(10, model.lenSvr);
+			cmd.setString(11, model.perSvr);
+			cmd.setString(12, model.sizeLoc);
+			cmd.setString(13, model.nameLoc);
+			cmd.setString(14, model.nameSvr);			
+			cmd.setString(15, model.pathLoc);
+			cmd.setString(16, model.pathSvr);
+			cmd.setString(17, model.pathRel);
+			cmd.setBoolean(18, model.complete);
+		} catch (SQLException e) {e.printStackTrace();}
 
-		db.ExecuteNonQuery(cmd,false);
-
-		String sql = "select top 1 f_id from up6_files order by f_id desc";		
-		int f_id = db.ExecuteScalar(sql);
-		return f_id;
+		db.ExecuteNonQuery(cmd);
 	}
 
 	/// <summary>
@@ -414,7 +379,7 @@ public class DBFile {
 	/// </summary>
 	/// <param name="inf"></param>
 	/// <returns></returns>
-	static public int Add(FileInf inf)
+	/*static public int Add(FileInf inf)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("insert into up6_files(");
@@ -474,7 +439,7 @@ public class DBFile {
 		int f_id = db.ExecuteScalar("select top 1 f_id from up6_files order by f_id desc");
 		
 		return f_id;
-	}
+	}*/
 
 	/// <summary>
 	/// 更新文件夹中子文件信息，
@@ -496,7 +461,7 @@ public class DBFile {
 		try {
 			cmd.setString(1, inf.pathSvr);
 			cmd.setString(1, inf.md5);
-			cmd.setInt(3, inf.idSvr);
+			cmd.setString(3, inf.id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -508,7 +473,7 @@ public class DBFile {
     /// 根据文件idSvr信息，更新文件数据表中对应项的MD5。
     /// </summary>
     /// <param name="inf"></param>
-    public void UpdateMD5(xdb_files inf)
+    public void UpdateMD5(FileInf inf)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("update up6_files set ");
@@ -519,7 +484,7 @@ public class DBFile {
 		PreparedStatement cmd = db.GetCommand(sb.toString());
 		try {
 			cmd.setString(1, inf.md5);
-			cmd.setInt(2, inf.idSvr);
+			cmd.setString(2, inf.id);
 		} catch (SQLException e) {e.printStackTrace();}
 
 		db.ExecuteNonQuery(cmd);
@@ -529,7 +494,7 @@ public class DBFile {
     /// 根据文件idSvr信息，更新文件数据表中对应项的MD5。
     /// </summary>
     /// <param name="inf"></param>
-    public void UpdateMD5_path(xdb_files inf)
+    public void UpdateMD5_path(FileInf inf)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("update up6_files set ");
@@ -542,7 +507,7 @@ public class DBFile {
 		try {
 			cmd.setString(1, inf.md5);
 			cmd.setString(2, inf.pathSvr);//fix(2015-07-30):重新更新路径
-			cmd.setInt(3, inf.idSvr);
+			cmd.setString(3, inf.id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -554,7 +519,7 @@ public class DBFile {
     /**
      * 更新文件MD5，服务器存储路径。
      */
-    public void updateInf(xdb_files inf)
+    public void updateInf(FileInf inf)
     {
 		StringBuilder sb = new StringBuilder();
 		sb.append("update up6_files set ");
@@ -573,7 +538,7 @@ public class DBFile {
 			cmd.setLong(3, inf.lenSvr);
 			cmd.setString(4, inf.perSvr);
 			cmd.setBoolean(5, inf.complete);
-			cmd.setInt(6, inf.idSvr);
+			cmd.setString(6, inf.id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -614,17 +579,20 @@ public class DBFile {
 	 * @param f_uid
 	 * @param f_id
 	 */
-	static public void fd_complete(String f_id, String fd_id, String uid)
+	static public void fd_complete(String fid, String uid)
 	{
-		String sql = "update up6_files set f_perSvr='100%' ,f_complete=1 where f_id=?;";
+		String sql = "update up6_files set f_perSvr='100%',f_lenSvr=f_lenLoc,f_complete=1 where f_id=? and uid=?;";
 		sql += "update up6_folders set fd_complete=1 where fd_id=? and fd_uid=?;";
+		sql += "update up6_files set f_perSvr='100%',f_lenSvr=f_lenLoc,f_complete=1 where f_pidRoot=?;";
 		
 		DbHelper db = new DbHelper();
 		PreparedStatement cmd = db.GetCommand(sql);
 		try {
-			cmd.setInt(1, Integer.parseInt(f_id));
-			cmd.setInt(2, Integer.parseInt(fd_id));
-			cmd.setInt(3, Integer.parseInt(uid));
+			cmd.setString(1, fid);
+			cmd.setInt(2, Integer.parseInt(uid));
+			cmd.setString(3, fid);
+			cmd.setInt(4, Integer.parseInt(uid));
+			cmd.setString(5, fid);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -674,21 +642,20 @@ public class DBFile {
 	///<param name="f_pos">文件位置，大小可能超过2G，所以需要使用long保存</param>
 	///<param name="f_lenSvr">已上传长度，文件大小可能超过2G，所以需要使用long保存</param>
 	///<param name="f_perSvr">已上传百分比</param>
-	public boolean f_process(int f_uid,int f_id,long f_pos,long f_lenSvr,String f_perSvr)
+	public boolean f_process(int uid,String f_id,long offset,long f_lenSvr,String f_perSvr)
 	{
-		//String sql = "update up6_files set f_pos=?,f_lenSvr=?,f_perSvr=? where f_uid=? and f_id=?";
-		String sql = "{call f_process(?,?,?,?,?,?)}";
+		String sql = "update up6_files set f_pos=?,f_lenSvr=?,f_perSvr=? where f_uid=? and f_id=?";
+		
 		DbHelper db = new DbHelper();
-		PreparedStatement cmd = db.GetCommandStored(sql);
+		PreparedStatement cmd = db.GetCommand(sql);
 		
 		try 
 		{
-			cmd.setString(1, Long.toString(f_pos) );
-			cmd.setInt(2, f_uid);
-			cmd.setInt(3, f_id);
-			cmd.setString(4, Long.toString(f_lenSvr) );
-			cmd.setString(5, f_perSvr);
-			cmd.setBoolean(6, false);
+			cmd.setLong(1, offset);
+			cmd.setLong(2, f_lenSvr);
+			cmd.setString(3, f_perSvr);
+			cmd.setInt(4, uid);
+			cmd.setString(5, f_id);
 		} catch (SQLException e) {e.printStackTrace();}
 
 		db.ExecuteNonQuery(cmd);
@@ -743,15 +710,15 @@ public class DBFile {
 	/// </summary>
 	/// <param name="f_uid"></param>
 	/// <param name="f_id"></param>
-	public void Delete(int f_uid,int f_id)
+	public void Delete(int uid,String fid)
 	{
 		String sql = "update up6_files set f_deleted=1 where f_uid=? and f_id=?";
 		DbHelper db = new DbHelper();
 		PreparedStatement cmd = db.GetCommand(sql);
 
 		try {
-			cmd.setInt(1, f_uid);
-			cmd.setInt(2, f_id);
+			cmd.setInt(1, uid);
+			cmd.setString(2, fid);
 			db.ExecuteNonQuery(cmd);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -793,8 +760,8 @@ public class DBFile {
 				fi.lenLoc = r.getLong(2);
 				fi.sizeLoc = r.getString(3);
 				fi.md5 = db.GetStringSafe(r.getString(4),"");			
-				fi.pidRoot = r.getInt(5);
-				fi.pidSvr = r.getInt(6);
+				fi.pidRoot = r.getString(5);
+				fi.pid = r.getString(6);
 				arrFiles.add( fi );
 			}
 			r.close();
@@ -838,14 +805,14 @@ public class DBFile {
 			while (r.next())
 			{
 				FileInf fi = new FileInf();
-	            fi.idSvr = r.getInt(1);
+	            fi.id = r.getString(1);
 				fi.nameLoc = r.getString(2);
 				fi.pathLoc = r.getString(3);
 				fi.lenLoc = r.getLong(4);
 				fi.sizeLoc = r.getString(5);
 				fi.md5 = db.GetStringSafe(r.getString(6),"");
-				fi.pidRoot = r.getInt(7);
-				fi.pidSvr = r.getInt(8);
+				fi.pidRoot = r.getString(7);
+				fi.pid = r.getString(8);
 	            fi.lenSvr = r.getLong(9);
 	            fi.pathSvr = r.getString(10);//fix(2015-03-18):修复续传文件时服务器会创建重复文件信息的问题。
 				files.add(fi);
@@ -864,7 +831,7 @@ public class DBFile {
 	 * @param inf
 	 * @return
 	 */
-	public boolean GetFileInfByFid(int fid,xdb_files inf)
+	public boolean GetFileInfByFid(String fid,FileInf inf)
 	{
 		boolean ret = false;
 		StringBuilder sb = new StringBuilder();
@@ -889,12 +856,12 @@ public class DBFile {
 		DbHelper db = new DbHelper();
 		PreparedStatement cmd = db.GetCommand(sb.toString());
 		try {
-			cmd.setInt(1, fid);
+			cmd.setString(1, fid);
 			ResultSet r = db.ExecuteDataSet(cmd);
 
 			if (r.next())
 			{
-				inf.idSvr 			= fid;
+				inf.id 				= fid;
 				inf.uid 			= r.getInt(1);
 				inf.nameLoc 		= r.getString(2);
 				inf.nameSvr 		= r.getString(3);
@@ -904,7 +871,7 @@ public class DBFile {
 				inf.md5 			= r.getString(7);
 				inf.lenLoc 			= r.getLong(8);
 				inf.sizeLoc 		= r.getString(9);
-	            inf.FilePos 		= r.getLong(10);
+	            inf.offset 			= r.getLong(10);
 	            inf.lenSvr 			= r.getLong(11);
 				inf.perSvr 			= r.getString(12);
 				inf.complete 		= r.getBoolean(13);
