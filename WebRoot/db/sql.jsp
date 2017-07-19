@@ -18,14 +18,8 @@ String sqlDir = PathTool.combine(pathParent,"sql");
 String downDir = PathTool.combine(pathParent,"sql.down");
 DbHelper db = new DbHelper();
 String[] sql_clear = {
-					 "if object_id('f_process') is not null drop procedure f_process"
-			        ,"if object_id('fd_fileProcess') is not null drop procedure fd_fileProcess"
-			    	,"if object_id('fd_files_add_batch') is not null drop procedure fd_files_add_batch"
-			        ,"if object_id('fd_files_check') is not null drop procedure fd_files_check"
-			        ,"if object_id('spGetFileInfByFid') is not null drop procedure spGetFileInfByFid"
+			         "if object_id('fd_files_check') is not null drop procedure fd_files_check"
 			        ,"if object_id('fd_add_batch') is not null drop procedure fd_add_batch"
-			        ,"if object_id('down_f_del') is not null drop procedure down_f_del"
-			        ,"if object_id('down_f_process') is not null drop procedure down_f_process"
 			        ,"if object_id('up6_files') is not null drop table up6_files"
 			        ,"if object_id('up6_folders') is not null drop table up6_folders"
 			        ,"if object_id('down_files') is not null drop table down_files"
