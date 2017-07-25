@@ -11,7 +11,7 @@ function FolderUploader(fdLoc, mgr)
     this.isFolder = true; //是文件夹
     this.folderInit = false;//文件夹已初始化
     this.Scaned = false;//是否已经扫描
-    this.folderSvr = { nameLoc: "",nameSvr:"",lenLoc:0,sizeLoc: "0byte", lenSvr: 0,perSvr:"0%", id:"",uid: 0, foldersCount: 0, filesCount: 0, filesComplete: 0, pathLoc: "", pathSvr: "", pathRel: "", pidRoot: "", complete: false, folders: [], files: [] };
+    this.folderSvr = { nameLoc: "",nameSvr:"",lenLoc:0,sizeLoc: "0byte", lenSvr: 0,perSvr:"0%", id:"",uid: mgr.Config.Fields["uid"], foldersCount: 0, filesCount: 0, filesComplete: 0, pathLoc: "", pathSvr: "", pathRel: "", pidRoot: "", complete: false, folders: [], files: [] };
     jQuery.extend(true,this.folderSvr, fdLoc);//续传信息
     this.manager = mgr;
     this.event = mgr.event;
@@ -180,7 +180,6 @@ function FolderUploader(fdLoc, mgr)
     };
     this.post_complete = function (json)
     {
-        this.event.fdComplete(this);
         $.each(this.ui.btn, function (i, n)
         {
             n.hide();
@@ -207,6 +206,7 @@ function FolderUploader(fdLoc, mgr)
 			, data: { uid: this.fields["uid"], id: this.id,time: new Date().getTime() }
 			, success: function (msg)
 			{
+			    _this.event.fdComplete(_this);//触发事件
 			    //添加到文件列表
 			    _this.FileListMgr.UploadComplete(_this.folderSvr);
 			    _this.manager.PostNext();
@@ -263,7 +263,6 @@ function FolderUploader(fdLoc, mgr)
     //所有文件全部上传完成
     this.all_complete = function ()
     {
-        this.event.fdComplete(this);
         $.each(this.ui.btn, function (i, n)
         {
             n.hide();
@@ -287,6 +286,7 @@ function FolderUploader(fdLoc, mgr)
 			, data: { uid: this.fields["uid"], id: this.id, time: new Date().getTime() }
 			, success: function (msg)
 			{
+			    _this.event.fdComplete(_this);//触发事件
 			    //添加到文件列表
 			    _this.FileListMgr.UploadComplete(_this.folderSvr);
 			    _this.manager.PostNext();

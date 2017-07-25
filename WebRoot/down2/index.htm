@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>down2-sql演示页面</title>
+    <title>down2.3-sql演示页面</title>
     <link href="js/down.css" type="text/css" rel="Stylesheet" />
     <script type="text/javascript" src="js/json2.min.js"></script>
     <script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
@@ -39,10 +39,7 @@
                         var tdName = tmp.find('td[name="name"]');
                         var tdSize = tmp.find('td[name="size"]');
                         var tdOp = tmp.find('td[name="op"]');
-
                         var f = item;
-                        var url = downer.Config["UrlDown"] + "?fid=" + f.idSvr;
-
                         if (f.fdTask ) { tdType.text("文件夹"); }
                         else { tdType.text("文件"); }
                         tdName.text(f.nameLoc);
@@ -50,24 +47,22 @@
                         tdOp.text("下载").css("cursor", "pointer").click(function ()
                         {
                             //文件夹
-                            if (f.fdTask )
+                            if ( f.fdTask )
                             {
-                                var d = downer.add_folder(url, f, f.nameLoc);
-                                if (d == null) return;//
+                                var d = downer.add_folder(f );
                             }
                             else
                             {
-                                var d = downer.add_file(url, f.nameLoc);
+                                var d = downer.add_file(f);
                                 if (d == null) return;//
                                 d.ui.size.text(f.sizeSvr);
                                 d.ui.name.text(f.nameLoc);
                             }
-                            //downer.PostFirst();
                         });
                         tb.append(tmp);
                     });
                 }
-                , error: function (req, txt, err) { alert("加载数据失败！" + req.responseText); }
+                , error: function (req, txt, err) { alert("加载上传数据失败！" + req.responseText); }
                 , complete: function (req, sta) { req = null; }
             });
         }

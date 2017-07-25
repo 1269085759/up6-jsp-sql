@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import up6.model.FileInf;
-import up6.model.FolderInf;
 
 import net.sf.json.JSONArray;
 
@@ -329,49 +328,6 @@ public class DBFile {
 		} catch (SQLException e) {e.printStackTrace();}
 
 		db.ExecuteNonQuery(cmd);
-	}
-
-	/// <summary>
-	/// 添加一个文件夹上传任务
-	/// </summary>
-	/// <param name="inf"></param>
-	/// <returns></returns>
-	static public int Add(FolderInf inf)
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("insert into up6_files(");
-		sb.append("f_nameLoc");
-		sb.append(",f_fdTask");
-		sb.append(",f_fdID");
-		sb.append(",f_lenLoc");
-		sb.append(",f_sizeLoc");
-		sb.append(",f_pathLoc");
-		sb.append(") values(");
-		sb.append("?");
-		sb.append(",1");
-		sb.append(",?");//fdID
-		sb.append(",?");//lenLoc
-		sb.append(",?");//sizeLoc
-		sb.append(",?");//pathLoc
-		sb.append(");");
-
-		DbHelper db = new DbHelper();
-		PreparedStatement cmd = db.GetCommand(sb.toString(),"f_id");
-		try 
-		{
-			cmd.setString(1, inf.nameLoc);
-			cmd.setInt(2, inf.idSvr);
-			cmd.setLong(3, inf.lenLoc);
-			cmd.setString(4, inf.size);
-			cmd.setString(5, inf.pathLoc);
-		} 
-		catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		int id = (int)db.ExecuteGenKey(cmd);
-		return id;
 	}
 
 	/// <summary>

@@ -1,5 +1,5 @@
 CREATE TABLE [dbo].[down_files](
-	[f_id] [int] IDENTITY(1,1) NOT NULL,
+	[f_id] [char](32) COLLATE Chinese_PRC_CI_AS NOT NULL,
 	[f_uid] [int] NOT NULL CONSTRAINT [DF_down_files_f_uid]  DEFAULT ((0)),
 	[f_mac] [nvarchar](50) COLLATE Chinese_PRC_CI_AS NULL,
 	[f_nameLoc] [nvarchar](255) COLLATE Chinese_PRC_CI_AS NULL,
@@ -10,7 +10,6 @@ CREATE TABLE [dbo].[down_files](
 	[f_lenSvr] [bigint] NULL CONSTRAINT [DF_down_files_f_lenSvr]  DEFAULT ((0)),
 	[f_sizeSvr] [nvarchar](10) COLLATE Chinese_PRC_CI_AS NULL,
 	[f_complete] [bit] NULL CONSTRAINT [DF_down_files_f_complete]  DEFAULT ((0)),
-	[f_pidRoot] [int] NULL CONSTRAINT [DF_down_files_f_pidRoot]  DEFAULT ((0)),
 	[f_fdTask] [bit] NULL CONSTRAINT [DF_down_files_f_folder]  DEFAULT ((0))
 ) ON [PRIMARY]
 
