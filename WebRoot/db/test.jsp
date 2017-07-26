@@ -17,9 +17,10 @@
 		2012-06-29 增加创建文件逻辑，
 */
 
-ArrayList<xdb_files> arrFiles = new ArrayList<xdb_files>();
+//ArrayList<xdb_files> arrFiles = new ArrayList<xdb_files>();
 //JSONArray json = JSONArray.fromObject( arrFiles );//bug:arrFiles为空时，此行代码有异常
 
-Gson g = new Gson();
+//Gson g = new Gson();
 
-out.write(FolderInf.class.toString());%>
+//out.write(FolderInf.class.toString());
+%>
