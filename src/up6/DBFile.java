@@ -67,7 +67,7 @@ public class DBFile {
 			}
 			r.close();
 			cmd.close();
-			
+			cmd.getConnection().close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -133,7 +133,8 @@ public class DBFile {
 				ret = true;
 			}
 			r.close();
-			cmd.close();			
+			cmd.close();
+			cmd.getConnection().close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
